@@ -59,6 +59,11 @@ react {
  */
 def enableProguardInReleaseBuilds = false
 
+def focusCatUploadStoreFile = project.findProperty("FOCUSCAT_UPLOAD_STORE_FILE")
+def focusCatUploadKeyAlias = project.findProperty("FOCUSCAT_UPLOAD_KEY_ALIAS")
+def focusCatUploadStorePassword = project.findProperty("FOCUSCAT_UPLOAD_STORE_PASSWORD")
+def focusCatUploadKeyPassword = project.findProperty("FOCUSCAT_UPLOAD_KEY_PASSWORD")
+
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
@@ -92,15 +97,27 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (focusCatUploadStoreFile) {
+                storeFile file(focusCatUploadStoreFile)
+            }
+            if (focusCatUploadKeyAlias) {
+                keyAlias focusCatUploadKeyAlias
+            }
+            if (focusCatUploadStorePassword) {
+                storePassword focusCatUploadStorePassword
+            }
+            if (focusCatUploadKeyPassword) {
+                keyPassword focusCatUploadKeyPassword
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
